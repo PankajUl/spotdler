@@ -20,6 +20,8 @@ from spotdl.utils.metadata import embed_metadata, get_file_metadata
         "m4a",
     ],
 )
+@pytest.mark.vcr()
+@pytest.mark.vcr_delete_on_fail
 def test_embed_metadata(tmpdir, monkeypatch, output_format):
     """
     Test convert function.
