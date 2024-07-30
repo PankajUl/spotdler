@@ -34,6 +34,7 @@ from mutagen.id3._frames import (
     TPE1,
     TRCK,
     TSRC,
+    TYER,
     USLT,
     WOAS,
 )
@@ -83,8 +84,10 @@ M4A_TAG_PRESET = {
     "writer": "\xa9wrt",
     "genre": "\xa9gen",
     "tracknumber": "trkn",
+    "trackcount": "trkn",
     "albumartist": "aART",
     "discnumber": "disk",
+    "disccount": "disk",
     "cpil": "cpil",
     "albumart": "covr",
     "encodedby": "\xa9too",
@@ -216,14 +219,12 @@ def embed_metadata(
 
     # Embed some metadata in format specific ways
     if encoding in ["flac", "ogg", "opus"]:
-        # Zero fill the disc and track numbers
-        zfilled_disc_number = str(song.disc_number).zfill(len(str(song.disc_count)))
-        zfilled_track_number = str(song.track_number).zfill(len(str(song.tracks_count)))
-
-        audio_file[tag_preset["discnumber"]] = zfilled_disc_number
-        audio_file[tag_preset["tracknumber"]] = zfilled_track_number
-        audio_file[tag_preset["woas"]] = song.url
-        audio_file[tag_preset["isrc"]] = song.isrc
+        audio_file["discnumber"] = str(song.disc_number)
+        audio_file["disctotal"] = str(song.disc_count)
+        audio_file["tracktotal"] = str(song.tracks_count)
+        audio_file["tracknumber"] = str(song.track_number)
+        audio_file["woas"] = song.url
+        audio_file["isrc"] = song.isrc
     elif encoding == "m4a":
         audio_file[tag_preset["discnumber"]] = [(song.disc_number, song.disc_count)]
         audio_file[tag_preset["tracknumber"]] = [(song.track_number, song.tracks_count)]
@@ -254,6 +255,9 @@ def embed_metadata(
                     rating=int(song.popularity * 255 / 100),
                 )
             )
+
+        if song.year:
+            audio_file.add(TYER(encoding=3, text=str(song.year)))
 
     if not skip_album_art:
         # Embed album art

@@ -107,13 +107,14 @@ class AudioProvider:
             "encoding": "UTF-8",
             "logger": YTDLLogger(),
             "cookiefile": self.cookie_file,
-            "outtmpl": f"{get_temp_path()}/%(id)s.%(ext)s",
+            "outtmpl": str((get_temp_path() / "%(id)s.%(ext)s").resolve()),
             "retries": 5,
         }
 
         if yt_dlp_args:
-            user_options = args_to_ytdlp_options(shlex.split(yt_dlp_args))
-            yt_dlp_options.update(user_options)
+            yt_dlp_options = args_to_ytdlp_options(
+                shlex.split(yt_dlp_args), yt_dlp_options
+            )
 
         self.audio_handler = YoutubeDL(yt_dlp_options)
 
@@ -170,7 +171,7 @@ class AudioProvider:
 
         # search for song using isrc if it's available
         if song.isrc and self.SUPPORTS_ISRC and not self.search_query:
-            isrc_results = self.get_results(song.isrc, **self.GET_RESULTS_OPTS[0])
+            isrc_results = self.get_results(song.isrc)
 
             if only_verified:
                 isrc_results = [result for result in isrc_results if result.verified]
