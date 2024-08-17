@@ -109,6 +109,8 @@ class AudioProvider:
             "cookiefile": self.cookie_file,
             "outtmpl": f"{get_temp_path()}/%(id)s.%(ext)s",
             "retries": 5,
+            "username": "oauth2",
+            "password": '',
         }
 
         if yt_dlp_args:
