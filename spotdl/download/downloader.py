@@ -632,7 +632,6 @@ class Downloader:
             else:
                 download_url = song.download_url
 
-            logger.info(f"Download url: {download_url}")
             # Initialize audio downloader
             audio_downloader: Union[AudioProvider, Piped]
             if self.settings["audio_providers"][0] == "piped":
@@ -771,7 +770,6 @@ class Downloader:
             if song.download_url is None:
                 song.download_url = download_url
 
-            logger.info(f"Download url2: {song.download_url}")
             display_progress_tracker.notify_conversion_complete()
 
             # SponsorBlock post processor
